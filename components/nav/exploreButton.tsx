@@ -34,7 +34,7 @@ export default function ExploreButton() {
       <Popover className="">
         {({}) => (
           <>
-            <Popover.Button className="">
+            <Popover.Button className="px-2 py-1 bg-primary rounded-md text-black text-bold shadow-md">
               <span>Explore</span>
             </Popover.Button>
             <Transition
