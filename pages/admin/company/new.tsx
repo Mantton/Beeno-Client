@@ -2,12 +2,6 @@ import axios from "axios";
 import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-export type Company = {
-  id: number;
-  name: string;
-  imageId: number;
-};
-
 type NewCompanyProp = {
   name: string;
   imageId: number;
@@ -72,8 +66,6 @@ export default function NewCompany() {
 
   return (
     <div className="grid gap-2 justify-center content-center">
-      <div className="text-lg text-bold text-center ">Create New Company</div>
-
       <form
         className="grid gap-4 justify-center"
         onSubmit={handleSubmit(onSubmit)}

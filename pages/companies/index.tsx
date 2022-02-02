@@ -14,7 +14,6 @@ type PageResponse = {
   lastPage: boolean;
 };
 export default function CompanyPage() {
-  const test = ["one", "two", "three", "four", "five"];
   const address = `http://localhost:5000/company?page=1&sort=0`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
