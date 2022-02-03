@@ -3,15 +3,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import axios from "axios";
+import slugify from "slugify";
+import { slug } from "../../../lib/utils";
 
 type PageResponse = {};
 export default function GroupPage() {
   const router = useRouter();
   const { id } = router.query;
+
+  //Reference : https://github.com/vercel/next.js/discussions/15952#discussioncomment-47750
   const address = `http://localhost:5000/group/${id}`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
-  const { data, error } = useSWR<any>(address, fetcher);
+  const { data, error } = useSWR<any>(id ? address : null, fetcher);
 
   if (!data) {
     return (
@@ -67,14 +71,18 @@ export default function GroupPage() {
             {eras.map((era: any) => {
               return (
                 <div key={era.id}>
-                  <div className="h-64 w-96 relative rounded-lg shadow-lg hover:shadow-xl">
-                    <Image
-                      src={era.image.base}
-                      layout="fill"
-                      className="rounded-lg object-cover"
-                    />
-                  </div>
-                  <p className="text-center text-xl ">{era.title}</p>
+                  <Link href={`/eras/${era.id}/${slug(era.title)}`}>
+                    <a>
+                      <div className="h-64 w-96 relative rounded-lg shadow-lg hover:shadow-xl">
+                        <Image
+                          src={era.image.base}
+                          layout="fill"
+                          className="rounded-lg object-cover"
+                        />
+                      </div>
+                      <p className="text-center text-xl ">{era.title}</p>
+                    </a>
+                  </Link>
                 </div>
               );
             })}
