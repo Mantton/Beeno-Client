@@ -10,7 +10,7 @@ export default function Layout({ children }: LayoutInterface) {
     <>
       <div className="flex flex-col h-screen justify-between">
         <NavBar />
-        <main>{children}</main>
+        <main className="">{children}</main>
         <FooterComponent />
       </div>
     </>

@@ -8,7 +8,7 @@ const options = [
   },
   {
     name: "Companies",
-    href: "##",
+    href: "/companies",
   },
   {
     name: "Groups",
