@@ -7,7 +7,7 @@ export default function NavAuthButton() {
   if (!context?.account) {
     return (
       <Link href={"/flow/login"}>
-        <a className="px-2 py-1 bg-primary rounded-md text-black text-bold shadow-md">
+        <a className="px-2 py-1 bg-primary rounded-md text-white text-bold shadow-md">
           Login
         </a>
       </Link>
@@ -15,9 +15,13 @@ export default function NavAuthButton() {
   }
   return (
     <>
-      <Link href={`/collector/${context.account.handle}`}>
-        <a>@{context.account.handle}</a>
-      </Link>
+      <div className="flex justify-center">
+        <Link href={`/collector/${context.account.handle}`}>
+          <a className="px-2 py-1 bg-primary rounded-md text-white text-bold shadow-md">
+            @{context.account.handle}
+          </a>
+        </Link>
+      </div>
     </>
   );
 }

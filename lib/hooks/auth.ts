@@ -10,6 +10,7 @@ export interface SignInFlowProp {
 export interface AccountInfo {
   id: number;
   handle: string;
+  privileges: number[];
 }
 export interface AccountContextProp {
   account: AccountInfo | null;

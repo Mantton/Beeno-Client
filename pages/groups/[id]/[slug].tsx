@@ -5,17 +5,27 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import slugify from "slugify";
 import { slug } from "../../../lib/utils";
+import { useAuthContext } from "../../../lib/hooks/auth";
+import NewMemberForm from "../../../components/forms/newMember";
+import NewEraForm from "../../../components/forms/newEra";
+import { useEffect, useState } from "react";
 
 type PageResponse = {};
 export default function GroupPage() {
   const router = useRouter();
   const { id } = router.query;
-
+  const { account } = useAuthContext();
   //Reference : https://github.com/vercel/next.js/discussions/15952#discussioncomment-47750
   const address = `http://localhost:5000/group/${id}`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
-  const { data, error } = useSWR<any>(id ? address : null, fetcher);
+  const { data, error, mutate } = useSWR<any>(id ? address : null, fetcher);
+
+  const [newEraModalOpen, setNewEraModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    mutate();
+  }, [newEraModalOpen]);
 
   if (!data) {
     return (
@@ -47,7 +57,12 @@ export default function GroupPage() {
         </div>
 
         <div className="member__section">
-          <p className="text-2xl font-semibold">Members</p>
+          <div className="flex justify-between">
+            <p className="text-2xl font-semibold">Members</p>
+            {account && account.privileges.some((p) => [0, 1].includes(p)) && (
+              <NewMemberForm groupId={result.id} companyId={result.companyId} />
+            )}
+          </div>
           <div className="flex flex-wrap gap-4 py-2">
             {members.map((artist: any) => {
               return (
@@ -66,7 +81,16 @@ export default function GroupPage() {
           </div>
         </div>
         <div className="eras__section">
-          <p className="text-2xl font-semibold">Eras</p>
+          <div className="flex justify-between">
+            <p className="text-2xl font-semibold">Eras</p>
+            {account && account.privileges.some((p) => [0, 2].includes(p)) && (
+              <NewEraForm
+                groupId={result.id}
+                isOpen={newEraModalOpen}
+                setIsOpen={setNewEraModalOpen}
+              />
+            )}
+          </div>
           <div className="flex flex-wrap gap-4 py-2">
             {eras.map((era: any) => {
               return (

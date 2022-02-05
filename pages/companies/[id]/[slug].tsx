@@ -4,6 +4,9 @@ import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import slugify from "slugify";
+import { FaPlus } from "react-icons/fa";
+import { useAuthContext } from "../../../lib/hooks/auth";
+import NewGroupForm from "../../../components/forms/newGroup";
 type populatedGroup = {
   id: number;
   name: string;
@@ -13,13 +16,14 @@ type populatedGroup = {
   };
 };
 type PageResponse = {
-  data: populatedGroup[];
+  id: number;
+  groups: any[];
 };
 export default function CompanyInfoPage() {
   const router = useRouter();
   const { id } = router.query;
-
-  const address = `http://localhost:5000/group?companyId=${id}&sort=0`;
+  const { account } = useAuthContext();
+  const address = `http://localhost:5000/company/${id}`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
   const { data, error } = useSWR<PageResponse>(address, fetcher);
@@ -29,11 +33,15 @@ export default function CompanyInfoPage() {
   return (
     <>
       <div className="grid justify-left p-10">
-        <div className="text-xl font-bold">
+        <div className="flex justify-between text-xl font-bold">
           <p>Groups</p>
+
+          {account && account.privileges.some((p) => [0, 1].includes(p)) && (
+            <NewGroupForm companyId={data.id} />
+          )}
         </div>
         <div className="flex flex-wrap justify-center gap-5">
-          {data.data.map((group) => {
+          {data.groups.map((group) => {
             return (
               <div key={group.id} className="flex justify-center items-center">
                 <Link

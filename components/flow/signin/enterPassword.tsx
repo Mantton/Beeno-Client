@@ -35,13 +35,8 @@ export default function EnterPassword() {
         { withCredentials: true }
       );
 
-      console.log(response.data);
-
-      authContext.setAccount({
-        id: response.data.data.id,
-        handle: response.data.data.handle,
-      });
-      router.push("/collector/" + response.data.data.handle);
+      authContext.setAccount(response.data);
+      router.push("/collector/" + response.data.handle);
     } catch (err) {
       setError("password", { message: "Invalid Password" });
     }
