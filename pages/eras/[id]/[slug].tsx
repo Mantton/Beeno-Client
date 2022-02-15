@@ -8,6 +8,7 @@ import NewCollectionForm from "../../../components/forms/newCollection";
 import NewSetForm from "../../../components/forms/newSet";
 import { slug } from "../../../lib/utils";
 import slugify from "slugify";
+import BaseBeenoCard from "../../../components/card/baseCard";
 export default function EraPage() {
   const router = useRouter();
   const [filter, setFilter] = useState<number | null>(null);
@@ -41,41 +42,35 @@ export default function EraPage() {
       </div>
     );
   }
-  const eraInfo = data.data;
-  const groupInfo = eraInfo.group;
-
-  const memberInfo = groupInfo.members.map((obj: any) => obj.artist);
-
-  const collections = eraInfo.collections;
-  const memberCss = (index: number) =>
-    `py-4 px-6 border-y-2 border-l-2 ${
-      index == memberInfo.length - 1 ? "border-r-2 rounded-r-md" : ""
-    }`;
+  const era = data.data;
+  const group = era.group;
+  const members = group.members;
+  const collections = era.collections;
 
   return (
     <>
-      <div className="flex flex-col ">
+      <div className="flex flex-col  ">
         <div className="border-b-2">
           <div className=" h-60 relative ">
             <Image
-              src={eraInfo.image.base}
+              src={era.imageUrl}
               layout="fill"
               className="object-cover blur-sm"
             ></Image>
             <div className="absolute inset-0 flex justify-center items-center z-10">
               <div className="w-full text-center font-bold p-4  text-white">
-                <p className="text-2xl drop-shadow-lg"> {groupInfo.name}</p>
-                <p className="text-3xl drop-shadow-lg"> {eraInfo.title}</p>
+                <p className="text-2xl drop-shadow-lg"> {group.name}</p>
+                <p className="text-3xl drop-shadow-lg"> {era.title}</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="flex justify-between p-4">
-          <p>Collections</p>
+          <p className="text-3xl font-bold">All Collections</p>
           {account && account.privileges.some((p) => [0, 2].includes(p)) && (
             <NewCollectionForm
-              eraId={eraInfo.id}
+              eraId={era.id}
               setIsOpen={setNcm}
               isOpen={ncm}
             ></NewCollectionForm>
@@ -117,27 +112,19 @@ export default function EraPage() {
                         collectionId={collection.id}
                         // isOpen={nem}
                         // setIsOpen={setNem}
-                        members={memberInfo}
+                        members={members}
                       />
                     )}
                 </div>
                 <div className="flex flex-wrap gap-10 py-4">
                   {collection.sets.map((set: any) => {
                     return (
-                      <div className="flex rounded-2xl">
-                        <div
-                          className={
-                            `p-2 shadow-lg rounded-2xl bg-gradient-to-tr from-primary to-` +
-                            rarityColor(set.rarity.label)
-                          }
-                        >
-                          <img
-                            src={set.image.base}
-                            alt="CARD"
-                            className="h-96 w-60 object-cover rounded-2xl"
-                          />
-                        </div>
-                      </div>
+                      <BaseBeenoCard
+                        set={set}
+                        artists={members.filter((v: any) =>
+                          set.artistIds.includes(v.id)
+                        )}
+                      ></BaseBeenoCard>
                     );
                   })}
                 </div>
@@ -149,7 +136,3 @@ export default function EraPage() {
     </>
   );
 }
-
-const rarityColor = (title: string) => {
-  return slugify(title, { lower: true, replacement: "_" });
-};

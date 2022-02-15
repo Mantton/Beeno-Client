@@ -8,9 +8,9 @@ interface LayoutInterface {
 export default function Layout({ children }: LayoutInterface) {
   return (
     <>
-      <div className="flex flex-col h-screen justify-between">
+      <div className="flex flex-col min-h-screen justify-between">
         <NavBar />
-        <main className="">{children}</main>
+        <main className="min-h-screen">{children}</main>
         <FooterComponent />
       </div>
     </>

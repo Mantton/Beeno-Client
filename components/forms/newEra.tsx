@@ -168,7 +168,7 @@ export default function NewEraForm({
                         ref={inputRef}
                         placeholder="Selected Image"
                         onChange={onImageSelected}
-                        accept="image/png, image/jpeg, image/jpg"
+                        accept="image/*"
                         hidden
                       />
                       <label

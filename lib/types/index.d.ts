@@ -13,3 +13,21 @@ export type Company = {
 };
 
 export type IUseState<T> = Dispatch<SetStateAction<T>>;
+
+export type Rarity = {
+  id: number;
+  label: string;
+  points: number;
+};
+export type Artist = {
+  id: number;
+  name: string;
+  imageUrl: string;
+};
+export type CardSet = {
+  id: number;
+  rarity: Rarity;
+  imageUrl: string;
+  created: Date;
+  artistIds: number[];
+};
