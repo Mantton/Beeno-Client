@@ -55,7 +55,7 @@ export default function EraPage() {
               layout="fill"
               className="object-cover blur-sm"
             ></Image>
-            <div className="absolute inset-0 flex justify-center items-center z-10">
+            <div className="absolute inset-0 flex justify-center items-center ">
               <div className="w-full text-center font-bold p-4  text-white">
                 <p className="text-2xl drop-shadow-lg"> {group.name}</p>
                 <p className="text-3xl drop-shadow-lg"> {era.title}</p>
@@ -98,12 +98,14 @@ export default function EraPage() {
             })}
           </div>
         </div> */}
-        <div className=" flex flex-col gap-6 justify-center  p-4">
+        <div className="flex flex-col gap-6 justify-center  p-4">
           {collections.map((collection: any) => {
             return (
               <div key={collection.id}>
                 <div className="flex justify-between">
-                  <p className="font-bold text-2xl">{collection.title}</p>
+                  <p className="font-bold text-2xl">
+                    Collection #{collection.id} - {collection.title}
+                  </p>
                   {account &&
                     account.privileges.some((p) => [0, 2].includes(p)) && (
                       <NewSetForm

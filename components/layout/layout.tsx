@@ -10,7 +10,7 @@ export default function Layout({ children }: LayoutInterface) {
     <>
       <div className="flex flex-col min-h-screen justify-between">
         <NavBar />
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-max h-full">{children}</main>
         <FooterComponent />
       </div>
     </>
