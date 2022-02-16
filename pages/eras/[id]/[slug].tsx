@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../lib/hooks/auth";
 import NewCollectionForm from "../../../components/forms/newCollection";
 import NewSetForm from "../../../components/forms/newSet";
-import { slug } from "../../../lib/utils";
-import slugify from "slugify";
 import BaseBeenoCard from "../../../components/card/baseCard";
 export default function EraPage() {
   const router = useRouter();
@@ -124,7 +122,17 @@ export default function EraPage() {
                         artists={members.filter((v: any) =>
                           set.artistIds.includes(v.id)
                         )}
-                      ></BaseBeenoCard>
+                        era={{ id: era.id, title: era.title }}
+                        group={{
+                          id: group.id,
+                          name: group.name,
+                          memberCount: members.length,
+                        }}
+                        collection={{
+                          id: collection.id,
+                          title: collection.title,
+                        }}
+                      />
                     );
                   })}
                 </div>

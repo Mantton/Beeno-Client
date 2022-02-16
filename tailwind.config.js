@@ -13,6 +13,22 @@ module.exports = {
         uncommon: "#ae2012",
         common: "#43aa8b",
       },
+      keyframes: {
+        beeno_card: {
+          "0%, 50%, 100%": {
+            "background-position": "0% 50%",
+          },
+          "25%": {
+            "background-position": "100% 50%",
+          },
+          "75%": {
+            "background-position": "100% 50%",
+          },
+        },
+      },
+      animation: {
+        card_glimmer: "beeno_card 5s ease infinite",
+      },
     },
   },
   plugins: [],

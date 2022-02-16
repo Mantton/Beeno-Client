@@ -5,56 +5,92 @@ import { CardSet, Artist } from "../../lib/types";
 interface PageProp {
   set: CardSet;
   artists: Artist[];
-  group: any;
+  collection: {
+    id: number;
+    title: string;
+  };
+  era: {
+    id: number;
+    title: string;
+  };
+  group: {
+    id: number;
+    name: string;
+    memberCount: number;
+  } | null;
 }
-export default function BaseBeenoCard({ set, artists }: PageProp) {
-  const gradientClass = rarityGradientEndColor(set.rarity.id);
+export default function BaseBeenoCard({
+  set,
+  artists,
+  collection,
+  era,
+  group,
+}: PageProp) {
+  const gradientClass = `hover:bg-[length:200%_200%] bg-right-top bg-gradient-to-t hover:bg-gradient-to-tr from-primary ${rarityGradientEndColor(
+    set.rarity.id
+  )} overflow-hidden`;
   const textClass = rarityTextColor(set.rarity.id);
+  const containsAllMembers = artists.length == group?.memberCount;
+  const hoverClass = "text-md font-light text-gray-400";
   return (
-    <div className="flex rounded-2xl">
-      <div
-        className={`shadow-lg rounded-2xl bg-gradient-to-t from-primary ${gradientClass}`}
-      >
-        <div className="h-96 w-60 relative m-2">
-          <Image
-            src={set.imageUrl}
-            alt="CARD"
-            className="object-cover rounded-xl "
-            layout="fill"
-          />
-
-          <div className="transition ease-in-out delay-150  absolute inset-0 flex  justify-start items-end z-0 opacity-0 hover:opacity-100 bg-gradient-to-b from-transparent to-black rounded-xl">
-            <div className="flex flex-col gap-2 text-white p-2">
-              <span> Set #{set.id}</span>
-              {artists.length === 1 && (
-                <Link href={"#"}>
-                  <a>
+    <Link href={"#"}>
+      <a className="">
+        <div className=" flex rounded-2xl ">
+          <div
+            className={`hover:animate-card_glimmer relative overflow-hidden rounded-2xl ${gradientClass}`}
+          >
+            <div className="  h-96 w-60 relative m-2">
+              <Image
+                src={set.imageUrl}
+                alt="CARD"
+                className="object-cover rounded-xl "
+                layout="fill"
+              />
+              <div className=" transition ease-in-out delay-150  absolute inset-0 flex  justify-start items-end z-0 opacity-0 hover:opacity-100 bg-gradient-to-b from-transparent to-black rounded-xl">
+                <div className="flex flex-col gap-2 text-white px-2 py-4">
+                  <span>
+                    {" "}
+                    Set #{set.id}
+                    {" • "}
+                    <span className={`font-semibold ${textClass}`}>
+                      {set.rarity.label}
+                    </span>
+                  </span>
+                  <p className="text-sm font-thin text-gray-500">
+                    <span>
+                      {group?.name ?? artists[0].name}
+                      {" • "}
+                      {era.title}
+                    </span>
+                    <p>Collection #{collection.id}</p>
+                  </p>
+                  {artists.length === 1 && (
                     <div className="flex gap-2 items-center">
-                      <div className="h-8 w-8 rounded-full relative">
+                      <div className="h-6 w-6 rounded-full relative">
                         <Image
                           src={artists[0].imageUrl}
                           className="object-cover rounded-full"
                           layout="fill"
                         ></Image>
                       </div>
-                      <span>{artists.map((v) => v.name).join(", ")}</span>
+                      <span className={hoverClass}>{artists[0].name}</span>
                     </div>
-                  </a>
-                </Link>
-              )}
-
-              {artists.length !== 1 && (
-                <span>{artists.map((v) => v.name).join(", ")}</span>
-              )}
-
-              <span className={`font-semibold ${textClass}`}>
-                {set.rarity.label}
-              </span>
+                  )}
+                  {containsAllMembers && (
+                    <span className={hoverClass}>OT{artists.length}</span>
+                  )}
+                  {artists.length !== 1 && !containsAllMembers && (
+                    <span className={hoverClass}>
+                      {artists.map((v) => v.name).join(", ")}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </a>
+    </Link>
   );
 }
 
