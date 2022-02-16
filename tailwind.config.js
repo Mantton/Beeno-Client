@@ -8,10 +8,10 @@ module.exports = {
       colors: {
         primary: "#95A2F1",
         legendary: "#f8961e",
-        ultra_rare: "#7b1cba",
+        ultra_rare: "#7b2cbf",
         rare: "#00c0f0",
         uncommon: "#ae2012",
-        common: "#43aa8b",
+        common: "#0ead69",
       },
       keyframes: {
         beeno_card: {
