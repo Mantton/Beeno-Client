@@ -29,5 +29,5 @@ export type CardSet = {
   rarity: Rarity;
   imageUrl: string;
   created: Date;
-  artistIds: number[];
+  artists: Artist[];
 };

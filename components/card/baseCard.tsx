@@ -1,10 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CardSet, Artist } from "../../lib/types";
+import { CardSet } from "../../lib/types";
 
 interface PageProp {
   set: CardSet;
-  artists: Artist[];
   collection: {
     id: number;
     title: string;
@@ -21,7 +20,6 @@ interface PageProp {
 }
 export default function BaseBeenoCard({
   set,
-  artists,
   collection,
   era,
   group,
@@ -29,6 +27,7 @@ export default function BaseBeenoCard({
   const gradientClass = `hover:bg-[length:100%_100%] bg-center bg-gradient-to-t from-primary ${rarityGradientEndColor(
     set.rarity.id
   )} overflow-hidden`;
+  const artists = set.artists;
   const textClass = rarityTextColor(set.rarity.id);
   const containsAllMembers = artists.length == group?.memberCount;
   const hoverClass = "text-md font-light text-gray-400 ";

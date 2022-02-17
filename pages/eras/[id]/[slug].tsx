@@ -121,9 +121,6 @@ export default function EraPage() {
                     return (
                       <BaseBeenoCard
                         set={set}
-                        artists={members.filter((v: any) =>
-                          set.artistIds.includes(v.id)
-                        )}
                         era={{ id: era.id, title: era.title }}
                         group={{
                           id: group.id,
