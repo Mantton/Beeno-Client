@@ -107,7 +107,7 @@ export default function GroupPage() {
 
       <div className=" px-8 py-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="relative h-28 w-28 -mt-[75px] rounded-full border-2 border-gray-600">
+          <div className="relative h-28 w-28 -mt-[75px] rounded-full border-2 border-gray-600 bg-black">
             <Image
               src={group.logoImageUrl}
               layout="fill"
@@ -126,7 +126,7 @@ export default function GroupPage() {
                     <Image
                       src={artist.imageUrl}
                       layout="fill"
-                      className="rounded-full object-cover"
+                      className="rounded-full object-cover bg-black"
                     />
                   </div>
                   <p className="text-center text-lg font-thin ">
@@ -144,7 +144,7 @@ export default function GroupPage() {
                 <div key={era.id}>
                   <Link href={`/eras/${era.id}/${slug(era.title)}`}>
                     <a>
-                      <div className="h-60 w-96 relative rounded-lg shadow-lg hover:shadow-xl">
+                      <div className="h-60 w-96 relative rounded-lg shadow-lg hover:shadow-xl hover:-m-2">
                         <Image
                           src={era.imageUrl}
                           layout="fill"

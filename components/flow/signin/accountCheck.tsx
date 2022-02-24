@@ -29,7 +29,6 @@ export default function FindAccount() {
         "http://localhost:5000/auth/flow/exists",
         { text: values.entry }
       );
-      console.log(response.data);
       context?.setEntry(values.entry);
       context?.setType(response.data.type);
     } catch (err: any) {

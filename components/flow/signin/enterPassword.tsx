@@ -26,7 +26,7 @@ export default function EnterPassword() {
 
     try {
       if (!flowContext.type) throw new Error("Bad State");
-      const response = await axios.post(
+      let response = await axios.post(
         "http://localhost:5000/auth/login",
         {
           password,
@@ -35,6 +35,9 @@ export default function EnterPassword() {
         { withCredentials: true }
       );
 
+      response = await axios.get("http://localhost:5000/auth/me", {
+        withCredentials: true,
+      });
       authContext.setAccount(response.data);
       router.push("/collector/" + response.data.handle);
     } catch (err) {
