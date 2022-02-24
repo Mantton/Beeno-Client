@@ -3,27 +3,28 @@ import { useRef, useState, Fragment, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { FaPlus } from "react-icons/fa";
+import { IUseState } from "../../lib/types";
 
 type ComponentProp = {
   groupId: number;
   companyId: number;
+  isOpen: boolean;
+  setIsOpen: IUseState<boolean>;
 };
 type Props = {
   name: string;
   imageId: number;
 };
-export default function NewMemberForm({ groupId, companyId }: ComponentProp) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
+export default function NewMemberForm({
+  groupId,
+  companyId,
+  isOpen,
+  setIsOpen,
+}: ComponentProp) {
   const [file, setFile] = useState<File | null>(null);
-  let [isOpen, setIsOpen] = useState(false);
-
+  const imageId = "imageId";
   function closeModal() {
     setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
   }
 
   useEffect(() => {
@@ -32,15 +33,12 @@ export default function NewMemberForm({ groupId, companyId }: ComponentProp) {
     reader.readAsDataURL(file);
     reader.onload = (event) => {
       const result = event.target?.result;
-      if (result && typeof result === "string") imageRef.current!.src = result;
+      const element = document.getElementById(
+        imageId
+      ) as HTMLImageElement | null;
+      if (element && result && typeof result === "string") element.src = result;
     };
   }, [file]);
-  const onImageSelected = () => {
-    const files = inputRef.current?.files;
-
-    if (!files) return;
-    setFile(files[0]);
-  };
 
   const {
     handleSubmit,
@@ -85,16 +83,6 @@ export default function NewMemberForm({ groupId, companyId }: ComponentProp) {
 
   return (
     <>
-      <div className=" flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md bg-opacity-80 hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          <FaPlus></FaPlus>
-        </button>
-      </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -160,9 +148,14 @@ export default function NewMemberForm({ groupId, companyId }: ComponentProp) {
                       <input
                         id="image-btn"
                         type="file"
-                        ref={inputRef}
                         placeholder="Selected Image"
-                        onChange={onImageSelected}
+                        onChange={(e) => {
+                          const files = e.target.files;
+
+                          const file = files && files[0];
+
+                          setFile(file);
+                        }}
                         accept="image/png, image/jpeg, image/jpg"
                         hidden
                       />
@@ -174,7 +167,7 @@ export default function NewMemberForm({ groupId, companyId }: ComponentProp) {
                       </label>
                       <div className="p-4 flex justify-center">
                         <img
-                          ref={imageRef}
+                          id={imageId}
                           src="/logo.png"
                           alt="Selected Image"
                           width={150}

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import Image from "next/image";
+import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../lib/hooks/auth";
 import NewCollectionForm from "../../../components/forms/newCollection";
@@ -35,9 +36,14 @@ export default function EraPage() {
 
   if (!data) {
     return (
-      <div className="flex justify-center">
-        <p> Loading</p>
-      </div>
+      <>
+        <Head>
+          <title> Era </title>
+        </Head>
+        <div className="flex justify-center">
+          <p> Loading</p>
+        </div>
+      </>
     );
   }
   const era = data.data;
@@ -47,6 +53,12 @@ export default function EraPage() {
 
   return (
     <>
+      <Head>
+        <title>
+          {" "}
+          {group.name} - {era.title}{" "}
+        </title>
+      </Head>
       <div className="flex flex-col  ">
         <div className="border-b-2">
           <div className=" h-60 relative ">

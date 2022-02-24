@@ -16,7 +16,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       .then((response) => {
         setAccount(response.data);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        // TODO: Do something
+      });
   }, [setAccount]);
   return (
     <AuthContext.Provider

@@ -1,30 +1,20 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import { IUseState } from "../../lib/types";
 import NewCompany from "../../pages/admin/company/new";
-
-export default function AddCompanyDialog() {
-  let [isOpen, setIsOpen] = useState(false);
+type ComponentProp = {
+  isOpen: boolean;
+  setIsOpen: IUseState<boolean>;
+};
+export default function AddCompanyDialog({isOpen, setIsOpen}: ComponentProp) {
 
   function closeModal() {
     setIsOpen(false);
   }
 
-  function openModal() {
-    setIsOpen(true);
-  }
-
   return (
     <>
-      <div className=" flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md bg-opacity-80 hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          <FaPlus></FaPlus>
-        </button>
-      </div>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog

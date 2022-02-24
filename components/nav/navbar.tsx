@@ -6,18 +6,19 @@ import Image from "next/image";
 export default function NavBar() {
   return (
     <>
-      <nav className="shadow-md p-2.5 flex justify-between items-center">
+      <nav className="shadow-md p-2.5 flex gap-6 justify-between items-center">
         <Link href="/#">
           <a>
-            <div className="flex items-center">
-              <Image
-                src={"/logo.png"}
-                alt="logo"
-                height={40}
-                width={40}
-                className="rounded-full ml-1.5 mr-1"
-              ></Image>
-              <span className=" text-2xl font-bold">Beeno</span>
+            <div className="flex items-center ">
+              <div className="relative h-[40px] w-[40px]">
+                <Image
+                  src={"/logo.png"}
+                  alt="logo"
+                  layout="fill"
+                  className="object-cover rounded-full"
+                ></Image>
+              </div>
+              <span className=" ml-1.5 text-2xl font-bold">Beeno</span>
             </div>
           </a>
         </Link>

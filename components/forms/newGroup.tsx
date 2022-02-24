@@ -1,42 +1,60 @@
 import axios from "axios";
-import { useRef, useState, Fragment } from "react";
+import { useRef, useState, Fragment, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { FaPlus } from "react-icons/fa";
+import { HiOutlineX } from "react-icons/hi";
+import { BiImageAdd } from "react-icons/bi";
+import { IUseState } from "../../lib/types";
+import Image from "next/image";
 
 type ComponentProp = {
   companyId: number;
+  isOpen: boolean;
+  setIsOpen: IUseState<boolean>;
 };
 type Props = {
   name: string;
   imageId: number;
 };
-export default function NewGroupForm({ companyId }: ComponentProp) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const [file, setFile] = useState<File | null>(null);
-  let [isOpen, setIsOpen] = useState(false);
+export default function NewGroupForm({
+  companyId,
+  isOpen,
+  setIsOpen,
+}: ComponentProp) {
+  const [bannerImageFile, setBannerImage] = useState<File | null>(null);
+  const [logoImageFile, setLogoImage] = useState<File | null>(null);
 
   function closeModal() {
     setIsOpen(false);
   }
 
-  function openModal() {
-    setIsOpen(true);
-  }
-  const onImageSelected = () => {
-    const files = inputRef.current?.files;
+  useEffect(() => {
+    if (bannerImageFile) {
+      const reader = new FileReader();
+      reader.readAsDataURL(bannerImageFile);
+      reader.onload = (event) => {
+        const result = event.target?.result;
+        const element = document.getElementById(
+          "bannerImage"
+        ) as HTMLImageElement | null;
+        if (element && result && typeof result === "string")
+          element.src = result;
+      };
+    }
 
-    if (!files) return;
-    setFile(files[0]);
-    if (!file) return;
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const result = event.target?.result;
-      if (result && typeof result === "string") imageRef.current!.src = result;
-    };
-  };
+    if (logoImageFile) {
+      const reader = new FileReader();
+      reader.readAsDataURL(logoImageFile);
+      reader.onload = (event) => {
+        const result = event.target?.result;
+        const element = document.getElementById(
+          "logoImage"
+        ) as HTMLImageElement | null;
+        if (element && result && typeof result === "string")
+          element.src = result;
+      };
+    }
+  }, [bannerImageFile, logoImageFile]);
 
   const {
     handleSubmit,
@@ -49,26 +67,40 @@ export default function NewGroupForm({ companyId }: ComponentProp) {
     try {
       // Upload File
 
-      const form = new FormData();
-      if (!file) {
-        setError("imageId", { message: "No Image Selected" });
+      let form = new FormData();
+      if (!logoImageFile || !bannerImageFile) {
+        setError("imageId", { message: "Banner & Logo Images are required" });
         return;
       }
-      form.append("file", file);
-      // Get Uploaded Image Id
-      const imageUploadResponse = await axios.post(
+
+      // Upload Banner Image
+
+      form.append("file", bannerImageFile);
+      let imageUploadResponse = await axios.post(
         "http://localhost:5000/image/upload",
         form,
         { withCredentials: true }
       );
-      const imageId = imageUploadResponse.data.data.id;
-      // Sent Company creation request
+      const bannerImageId = imageUploadResponse.data.data.id;
+
+      // Upload Logo Image
+      form = new FormData();
+      form.append("file", logoImageFile);
+
+      imageUploadResponse = await axios.post(
+        "http://localhost:5000/image/upload",
+        form,
+        { withCredentials: true }
+      );
+      const logoImageId = imageUploadResponse.data.data.id;
+
       await axios.post(
         "http://localhost:5000/group/new",
         {
           name: values.name,
-          imageId: imageId,
-          companyId: companyId,
+          bannerImageId,
+          logoImageId,
+          companyId,
         },
         { withCredentials: true }
       );
@@ -80,16 +112,6 @@ export default function NewGroupForm({ companyId }: ComponentProp) {
 
   return (
     <>
-      <div className=" flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md bg-opacity-80 hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          <FaPlus></FaPlus>
-        </button>
-      </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -125,67 +147,121 @@ export default function NewGroupForm({ companyId }: ComponentProp) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+              <div className="inline-block w-full max-w-xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md">
                 <Dialog.Title
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900 flex justify-between"
                 >
-                  <p>Add Group</p>
+                  <p className="font-bold text-lg">Add Group</p>
 
                   <button
                     type="button"
-                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                    className="inline-flex justify-center px-4 py-2 text-x"
                     onClick={closeModal}
                   >
-                    Close
+                    <HiOutlineX />
                   </button>
                 </Dialog.Title>
                 <div className="mt-2">
-                  <div className="grid gap-2 justify-center content-center">
-                    <form
-                      className="grid gap-4 justify-center"
-                      onSubmit={handleSubmit(onSubmit)}
-                    >
+                  <form
+                    className="grid gap-4 "
+                    onSubmit={handleSubmit(onSubmit)}
+                  >
+                    <div>
+                      <label>
+                        <p className="text-bold text-md font-semibold pb-2">
+                          Name
+                        </p>
+                      </label>
                       <input
                         type="text"
-                        placeholder="Group Name"
-                        className="appearance-none rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-slate-500 ring-2 ring-primary"
+                        placeholder="Group name"
+                        className="appearance-none rounded-sm focus:rounded-md w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-slate-500 ring-2 ring-primary"
                         {...register("name")}
                       />
-                      <input
-                        id="image-btn"
-                        type="file"
-                        ref={inputRef}
-                        placeholder="Selected Image"
-                        onChange={onImageSelected}
-                        accept="image/png, image/jpeg, image/jpg"
-                        hidden
-                      />
-                      <label
-                        htmlFor="image-btn"
-                        className="px-1 py-2 bg-primary rounded shadow-lg cursor-pointer text-white text-center"
-                      >
-                        Upload Image
-                      </label>
-                      <div className="p-4 flex justify-center">
-                        <img
-                          ref={imageRef}
-                          src="/logo.png"
-                          alt="Selected Image"
-                          width={150}
-                          height={300}
-                          className="rounded content-center"
-                        />
-                      </div>
+                    </div>
 
-                      <button
-                        type="submit"
-                        className="bg-primary px-1 py-2 rounded shadow-md text-white"
-                      >
-                        Create
-                      </button>
-                    </form>
-                  </div>
+                    <div>
+                      <label>
+                        <p className="text-bold text-md font-semibold pb-2">
+                          Banner Image
+                        </p>
+                      </label>
+                      <div className="relative h-52 w-64 bg-opacity-75 rounded-md border-2 border-dashed border-gray-700 flex justify-center items-center hover:bg-gray-500 hover:bg-opacity-50 hover:cursor-pointer">
+                        <input
+                          type="file"
+                          id="bannerImageInput"
+                          placeholder="banner image"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files && e.target.files[0];
+                            if (!file) return;
+                            setBannerImage(file);
+                          }}
+                          accept="image/png, image/jpeg, image/jpg"
+                        />
+                        <label
+                          htmlFor="bannerImageInput"
+                          className="relative w-full h-full flex justify-center items-center hover:cursor-pointer"
+                        >
+                          {!bannerImageFile && (
+                            <BiImageAdd size={70} className="text-gray-600" />
+                          )}
+                          {bannerImageFile && (
+                            <img
+                              src=""
+                              id="bannerImage"
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label>
+                        <p className="text-bold text-md font-semibold pb-2">
+                          Group Logo
+                        </p>
+                      </label>
+                      <div className="relative h-52 w-64 bg-opacity-75 rounded-md border-2 border-dashed border-gray-700 flex justify-center items-center hover:bg-gray-500 hover:bg-opacity-50 hover:cursor-pointer">
+                        <input
+                          type="file"
+                          id="logoImageInput"
+                          placeholder="logo image"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files && e.target.files[0];
+                            if (!file) return;
+                            setLogoImage(file);
+                          }}
+                          accept="image/png, image/jpeg, image/jpg"
+                        />
+                        <label
+                          htmlFor="logoImageInput"
+                          className="relative w-full h-full flex justify-center items-center hover:cursor-pointer"
+                        >
+                          {!logoImageFile && (
+                            <BiImageAdd size={70} className="text-gray-600" />
+                          )}
+                          {logoImageFile && (
+                            <img
+                              src=""
+                              id="logoImage"
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </label>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="bg-primary px-1 py-2 rounded shadow-md text-white"
+                    >
+                      Create
+                    </button>
+                  </form>
                 </div>
               </div>
             </Transition.Child>

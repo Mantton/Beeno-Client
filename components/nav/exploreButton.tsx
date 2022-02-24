@@ -1,10 +1,10 @@
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-
+import Link from "next/link";
 const options = [
   {
     name: "All Cards",
-    href: "##",
+    href: "/cards",
   },
   {
     name: "Companies",
@@ -12,19 +12,15 @@ const options = [
   },
   {
     name: "Groups",
-    href: "##",
+    href: "/groups",
   },
   {
     name: "Artists",
-    href: "##",
+    href: "/artists",
   },
   {
     name: "Eras",
-    href: "##",
-  },
-  {
-    name: "Card Sets",
-    href: "##",
+    href: "/eras",
   },
 ];
 
@@ -34,7 +30,7 @@ export default function ExploreButton() {
       <Popover className="">
         {({}) => (
           <>
-            <Popover.Button className="px-2 py-1 bg-primary rounded-md text-black text-bold shadow-md">
+            <Popover.Button className="px-2 py-1  text-black text-bold ">
               <span>Explore</span>
             </Popover.Button>
             <Transition
@@ -50,15 +46,13 @@ export default function ExploreButton() {
                 <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                   <div className="relative grid gap-8 bg-white  p-4 lg:grid-cols-1">
                     {options.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                      >
-                        <p className="text-sm font-medium text-gray-900">
-                          {item.name}
-                        </p>
-                      </a>
+                      <Link key={item.name} href={item.href}>
+                        <a className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50">
+                          <p className="text-sm font-medium text-gray-900">
+                            {item.name}
+                          </p>
+                        </a>
+                      </Link>
                     ))}
                   </div>
                 </div>

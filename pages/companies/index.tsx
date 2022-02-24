@@ -1,56 +1,116 @@
+import Link from "next/link";
 import axios from "axios";
 import useSWR from "swr";
+import { Company } from "../../lib/types";
 import Image from "next/image";
+import Head from "next/head";
+import { FaEllipsisH, FaPlus } from "react-icons/fa";
 import slugify from "slugify";
-type Company = {
-  id: number;
-  name: string;
-  image: {
-    base: string;
-  };
-};
-type PageResponse = {
+import AddCompanyDialog from "../../components/admin/popup";
+import { useEffect, useState } from "react";
+
+interface PageResponse {
   companies: Company[];
-  lastPage: boolean;
-};
+}
+
 export default function CompanyPage() {
   const address = `http://localhost:5000/company?page=1&sort=0`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
-  const { data, error } = useSWR<PageResponse>(address, fetcher);
+  const { data, error, mutate } = useSWR<PageResponse>(address, fetcher);
 
-  if (error) return <p>Failed</p>;
-  if (!data) return <p>Loading...</p>;
+  // SACM - Show Add Company Modal
+  const [SACM, setSACM] = useState<boolean>(false);
+
+  useEffect(() => {
+    mutate();
+  }, [SACM]);
+
+  if (error) {
+    return (
+      <div className="flex justify-center">
+        {" "}
+        <p> An Error Occurred</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex justify-center">
+        {" "}
+        <p>Loading..</p>
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="grid justify-center">
-        <div className="flex justify-center">
-          {data &&
-            data.companies.map((company) => {
+      <Head>
+        <title>Companies</title>
+      </Head>
+      <div className="flex p-8">
+        <table className="border- collapse table-auto w-full text-sm">
+          <thead>
+            <tr className="text-left">
+              <th className="border-b p-4">
+                <h1 className=" flex justify-between text-lg  items-center">
+                  <p className="">Companies</p>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => {
+                        setSACM(true);
+                      }}
+                      className="rounded-full shadow-lg bg-primary"
+                    >
+                      <FaPlus className="drop-shadow-lg text-sm m-1" />
+                    </button>
+                    <AddCompanyDialog isOpen={SACM} setIsOpen={setSACM} />
+                  </div>
+                </h1>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {data.companies.map((company) => {
               return (
-                <div key={company.id} className="p-4">
-                  <a
-                    href={`/companies/${company.id}/${slugify(company.name, {
-                      lower: true,
-                    })}`}
-                    className=""
-                  >
-                    <div className="grid justify-center gap-2">
-                      <Image
-                        src={company.image.base}
-                        height={250}
-                        width={200}
-                        className="grid justify-center rounded-lg"
-                      ></Image>
-                      <div className="flex justify-center">
-                        <h3>{company.name}</h3>
+                <tr>
+                  <td className="border-b p-4 text-md">
+                    <div className="flex justify-between items-center">
+                      <div className="">
+                        <Link
+                          href={`/companies/${company.id}/${slugify(
+                            company.name,
+                            {
+                              lower: true,
+                            }
+                          )}`}
+                        >
+                          <a className="flex items-center">
+                            <Image
+                              src={company.imageUrl}
+                              width={50}
+                              height={50}
+                              layout="intrinsic"
+                              className="rounded-full"
+                            ></Image>
+                            <p className="px-4">{company.name}</p>
+                          </a>
+                        </Link>
+                      </div>
+
+                      <div className="">
+                        {" "}
+                        <FaEllipsisH style={{ color: "gray" }} />
                       </div>
                     </div>
-                  </a>
-                </div>
+                  </td>
+                </tr>
               );
             })}
-        </div>
+          </tbody>
+        </table>
       </div>
     </>
   );
