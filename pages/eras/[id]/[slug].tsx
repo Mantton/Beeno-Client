@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import Image from "next/image";
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../lib/hooks/auth";
 import NewCollectionForm from "../../../components/forms/newCollection";
@@ -14,6 +15,12 @@ export default function EraPage() {
   const [ncm, setNcm] = useState(false); // New Collection Modal
   const [nem, setNem] = useState(false); // New Set Modal
 
+  enum CurrentView {
+    collections,
+    allCards,
+  }
+
+  const [currentView, setCurrentView] = useState(CurrentView.collections);
   const { account } = useAuthContext();
   const { id } = router.query;
 
@@ -76,6 +83,21 @@ export default function EraPage() {
           </div>
         </div>
 
+        <div className="flex justify-center p-4 ">
+          <div className="border-2 border-white rounded-md flex justify-center ">
+            <button>
+              <div className="w-32 p-4 items-center flex justify-center hover:shadow-md hover:shadow-amber-700 rounded-l-sm">
+                <span className="">Collections</span>
+              </div>
+            </button>
+            <div className="bg-primary w-[2px]"></div>
+            <button>
+              <div className="w-32 p-4 items-center flex justify-center">
+                <span className="">All Cards</span>
+              </div>
+            </button>
+          </div>
+        </div>
         <div className="flex justify-between p-4">
           <p className="text-3xl font-bold">All Collections</p>
           {account && account.privileges.some((p) => [0, 2].includes(p)) && (
