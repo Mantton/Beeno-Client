@@ -1,26 +1,30 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../../../lib/hooks/auth";
+import { createContext, useEffect, useState } from "react";
+import { EraPageMutatorContext, useAuthContext } from "../../../lib/hooks/auth";
 import NewCollectionForm from "../../../components/forms/newCollection";
 import NewSetForm from "../../../components/forms/newSet";
 import BaseBeenoCard from "../../../components/card/baseCard";
+import CollectionView from "../../../modules/eras/CollectionView/collection_view";
+import { FaPlus } from "react-icons/fa";
+import { Era } from "../../../lib/types";
+
 export default function EraPage() {
   const router = useRouter();
   const [filter, setFilter] = useState<number | null>(null);
   const [ncm, setNcm] = useState(false); // New Collection Modal
   const [nem, setNem] = useState(false); // New Set Modal
 
-  enum CurrentView {
+  enum View {
     collections,
     allCards,
   }
 
-  const [currentView, setCurrentView] = useState(CurrentView.collections);
+  const [currentView, setCurrentView] = useState(View.collections);
   const { account } = useAuthContext();
   const { id } = router.query;
 
@@ -28,7 +32,7 @@ export default function EraPage() {
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
 
-  const { data, error, mutate } = useSWR<any>(id ? address : null, fetcher);
+  const { data, error, mutate } = useSWR<Era>(id ? address : null, fetcher);
 
   useEffect(() => {
     mutate();
@@ -53,9 +57,9 @@ export default function EraPage() {
       </>
     );
   }
-  const era = data.data;
+  const era = data;
   const group = era.group;
-  const members = group.members;
+  const members = group!.members;
   const collections = era.collections;
 
   return (
@@ -63,7 +67,7 @@ export default function EraPage() {
       <Head>
         <title>
           {" "}
-          {group.name} - {era.title}{" "}
+          {group!.name} - {era.title}{" "}
         </title>
       </Head>
       <div className="flex flex-col  ">
@@ -76,103 +80,51 @@ export default function EraPage() {
             ></Image>
             <div className="absolute inset-0 flex justify-center items-center ">
               <div className="w-full text-center font-bold p-4  text-white">
-                <p className="text-2xl drop-shadow-lg"> {group.name}</p>
+                <p className="text-2xl drop-shadow-lg"> {group!.name}</p>
                 <p className="text-3xl drop-shadow-lg"> {era.title}</p>
               </div>
             </div>
+            {account && account.privileges.some((p) => [0, 2].includes(p)) && (
+              <div className="absolute inset-0 flex justify-end items-end p-4">
+                <div className=" flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNcm(true);
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md bg-opacity-80 hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+                  >
+                    <FaPlus></FaPlus>
+                  </button>
+                </div>
+                <NewCollectionForm
+                  eraId={era.id}
+                  setIsOpen={setNcm}
+                  isOpen={ncm}
+                ></NewCollectionForm>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="flex justify-center p-4 ">
           <div className="border-2 border-white rounded-md flex justify-center ">
-            <button>
+            <button onClick={() => setCurrentView(View.collections)}>
               <div className="w-32 p-4 items-center flex justify-center hover:shadow-md hover:shadow-amber-700 rounded-l-sm">
                 <span className="">Collections</span>
               </div>
             </button>
             <div className="bg-primary w-[2px]"></div>
-            <button>
+            <button onClick={() => setCurrentView(View.allCards)}>
               <div className="w-32 p-4 items-center flex justify-center">
                 <span className="">All Cards</span>
               </div>
             </button>
           </div>
         </div>
-        <div className="flex justify-between p-4">
-          <p className="text-3xl font-bold">All Collections</p>
-          {account && account.privileges.some((p) => [0, 2].includes(p)) && (
-            <NewCollectionForm
-              eraId={era.id}
-              setIsOpen={setNcm}
-              isOpen={ncm}
-            ></NewCollectionForm>
-          )}
-        </div>
-        {/* <div className="p-6 ">
-          <div className="flex justify-center ">
-            <button
-              className="py-4 px-6 border-y-2 border-l-2 rounded-l-md
-              "
-            >
-              <p className="font-bold">All</p>
-            </button>
-
-            {memberInfo.map((member: any, index: number) => {
-              return (
-                <button
-                  onClick={() => {
-                    setFilter(member.id);
-                  }}
-                  key={member.id}
-                  className={memberCss(index)}
-                >
-                  <p className="font-bold">{member.name}</p>
-                </button>
-              );
-            })}
-          </div>
-        </div> */}
-        <div className="flex flex-col gap-6 justify-center  p-4">
-          {collections.map((collection: any) => {
-            return (
-              <div key={collection.id}>
-                <div className="flex justify-between">
-                  <p className="font-bold text-2xl">
-                    Collection #{collection.id} - {collection.title}
-                  </p>
-                  {account &&
-                    account.privileges.some((p) => [0, 2].includes(p)) && (
-                      <NewSetForm
-                        collectionId={collection.id}
-                        // isOpen={nem}
-                        // setIsOpen={setNem}
-                        members={members}
-                      />
-                    )}
-                </div>
-                <div className="flex flex-wrap gap-10 py-4">
-                  {collection.sets.map((set: any) => {
-                    return (
-                      <BaseBeenoCard
-                        set={set}
-                        era={{ id: era.id, title: era.title }}
-                        group={{
-                          id: group.id,
-                          name: group.name,
-                          memberCount: members.length,
-                        }}
-                        collection={{
-                          id: collection.id,
-                          title: collection.title,
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <EraPageMutatorContext.Provider value={{ mutate }}>
+          <CollectionView era={era} />
+        </EraPageMutatorContext.Provider>
       </div>
     </>
   );

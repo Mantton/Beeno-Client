@@ -55,7 +55,7 @@ export default function GroupPage() {
   const group = data;
   const members = data.members;
   const company = data.company;
-  const eras = data.eras;
+  const eras = data.eras!;
 
   const canAddEra =
     account?.privileges.some((p) => [0, 1].includes(p)) ?? false;

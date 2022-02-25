@@ -1,33 +1,35 @@
 import axios from "axios";
-import { useRef, useState, Fragment, useEffect } from "react";
+import { useRef, useState, Fragment, useEffect, useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { FaPlus } from "react-icons/fa";
 import { IUseState } from "../../lib/types";
 import Select from "react-select";
 import { API_URL } from "../../lib/constants";
+import { useEraPageContext } from "../../lib/hooks/auth";
 
-type ComponentProp = {
+type NewSetFormProps = {
   collectionId: number;
-
   members: any[];
+  isOpen: boolean;
+  setIsOpen: IUseState<boolean>;
 };
 type Props = {
   title: string;
 };
-export default function NewSetForm({ collectionId, members }: ComponentProp) {
+export default function NewSetForm({
+  collectionId,
+  members,
+  isOpen,
+  setIsOpen,
+}: NewSetFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  let [isOpen, setIsOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
+  const { mutate } = useEraPageContext();
 
   function closeModal() {
     setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
   }
 
   useEffect(() => {
@@ -56,8 +58,6 @@ export default function NewSetForm({ collectionId, members }: ComponentProp) {
   const onSubmit: SubmitHandler<Props> = async (values) => {
     try {
       // Upload File
-      console.log("Coaut");
-
       const form = new FormData();
       if (!file) {
         setError("title", { message: "No Image Selected" });
@@ -89,6 +89,7 @@ export default function NewSetForm({ collectionId, members }: ComponentProp) {
         },
         { withCredentials: true }
       );
+      mutate();
       closeModal();
     } catch (err) {
       setError("title", { message: "An Error Occurred" });
@@ -97,16 +98,6 @@ export default function NewSetForm({ collectionId, members }: ComponentProp) {
 
   return (
     <>
-      <div className=" flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md bg-opacity-80 hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          <FaPlus></FaPlus>
-        </button>
-      </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"

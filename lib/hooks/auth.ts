@@ -1,4 +1,6 @@
 import { useContext, createContext } from "react";
+import { KeyedMutator } from "swr";
+import { Era } from "../types";
 
 export interface SignInFlowProp {
   entry: string | null;
@@ -33,6 +35,18 @@ export function useSignInFlowContext() {
 
 export function useAuthContext() {
   const context = useContext(AuthContext);
+
+  if (context === undefined)
+    throw new Error("Auth Context used outside provider");
+  return context;
+}
+
+export const EraPageMutatorContext = createContext<
+  { mutate: KeyedMutator<Era> } | undefined
+>(undefined);
+
+export function useEraPageContext() {
+  const context = useContext(EraPageMutatorContext);
 
   if (context === undefined)
     throw new Error("Auth Context used outside provider");

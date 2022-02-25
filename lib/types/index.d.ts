@@ -7,7 +7,7 @@ export type CompanyRequest = {
 export type Company = {
   id: number;
   name: string;
-  imageUrl: string
+  imageUrl: string;
 };
 
 export type IUseState<T> = Dispatch<SetStateAction<T>>;
@@ -31,16 +31,32 @@ export type CardSet = {
 };
 
 export type Era = {
-  id: string,
-  title : string,
-  imageUrl: string
-}
+  id: number;
+  title: string;
+  imageUrl: string;
+  group?: Group;
+  collections: Collection[];
+};
 export type Group = {
-  id: number,
-  name: string,
-  company: Company,
-  bannerImageUrl : string
-  logoImageUrl: string,
-  members: Artist[],
-  eras : Era[]
-}
+  id: number;
+  name: string;
+  company: Company;
+  bannerImageUrl: string;
+  logoImageUrl: string;
+  members: Artist[];
+  eras?: Era[];
+};
+
+export type Set = {
+  id: number;
+  created: Date;
+  rarity: Rarity;
+  imageUrl: string;
+  artists: Artist[];
+};
+
+export type Collection = {
+  id: number;
+  title: string;
+  sets: Set[];
+};
