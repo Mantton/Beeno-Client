@@ -5,6 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { FaPlus } from "react-icons/fa";
 import { IUseState } from "../../lib/types";
 import Select from "react-select";
+import { API_URL } from "../../lib/constants";
 
 type ComponentProp = {
   collectionId: number;
@@ -71,7 +72,7 @@ export default function NewSetForm({ collectionId, members }: ComponentProp) {
       form.append("file", file);
       // Get Uploaded Image Id
       const imageUploadResponse = await axios.post(
-        "http://localhost:5000/image/upload",
+        `${API_URL}/image/upload`,
         form,
         { withCredentials: true }
       );
@@ -79,7 +80,7 @@ export default function NewSetForm({ collectionId, members }: ComponentProp) {
       // Sent Company creation request
       //   const artistIds = members.map((v: any) => v.id);
       await axios.post(
-        "http://localhost:5000/set/new",
+        `${API_URL}/set/new`,
         {
           title: values.title,
           imageId,

@@ -2,10 +2,11 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { API_URL } from "../lib/constants";
 
 const Home: NextPage = () => {
   return (
-    <div className="">
+    <>
       <Head>
         <title>Beeno</title>
         <meta
@@ -45,7 +46,7 @@ const Home: NextPage = () => {
           />
         </div>
       </main>
-    </div>
+    </>
   );
 };
 

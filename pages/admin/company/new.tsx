@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { API_URL } from "../../../lib/constants";
 
 type NewCompanyProp = {
   name: string;
@@ -43,7 +44,7 @@ export default function NewCompany() {
       form.append("file", file);
       // Get Uploaded Image Id
       const imageUploadResponse = await axios.post(
-        "http://localhost:5000/image/upload",
+        `${API_URL}/image/upload`,
         form,
         { withCredentials: true }
       );
@@ -51,7 +52,7 @@ export default function NewCompany() {
       console.log(imageId);
       // Sent Company creation request
       const response = await axios.post(
-        "http://localhost:5000/company/new",
+        `${API_URL}/company/new`,
         {
           name: values.name,
           imageId: imageId,

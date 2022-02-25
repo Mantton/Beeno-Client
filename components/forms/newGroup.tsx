@@ -6,6 +6,7 @@ import { HiOutlineX } from "react-icons/hi";
 import { BiImageAdd } from "react-icons/bi";
 import { IUseState } from "../../lib/types";
 import Image from "next/image";
+import { API_URL } from "../../lib/constants";
 
 type ComponentProp = {
   companyId: number;
@@ -77,7 +78,7 @@ export default function NewGroupForm({
 
       form.append("file", bannerImageFile);
       let imageUploadResponse = await axios.post(
-        "http://localhost:5000/image/upload",
+        `${API_URL}/image/upload`,
         form,
         { withCredentials: true }
       );
@@ -87,15 +88,13 @@ export default function NewGroupForm({
       form = new FormData();
       form.append("file", logoImageFile);
 
-      imageUploadResponse = await axios.post(
-        "http://localhost:5000/image/upload",
-        form,
-        { withCredentials: true }
-      );
+      imageUploadResponse = await axios.post(`${API_URL}/image/upload`, form, {
+        withCredentials: true,
+      });
       const logoImageId = imageUploadResponse.data.data.id;
 
       await axios.post(
-        "http://localhost:5000/group/new",
+        `${API_URL}/group/new`,
         {
           name: values.name,
           bannerImageId,

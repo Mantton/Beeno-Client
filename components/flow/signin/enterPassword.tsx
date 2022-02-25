@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { API_URL } from "../../../lib/constants";
 
 interface FormValues {
   password: string;
@@ -27,7 +28,7 @@ export default function EnterPassword() {
     try {
       if (!flowContext.type) throw new Error("Bad State");
       let response = await axios.post(
-        "http://localhost:5000/auth/login",
+        `${API_URL}/auth/login`,
         {
           password,
           [flowContext.type]: flowContext.entry,
@@ -35,7 +36,7 @@ export default function EnterPassword() {
         { withCredentials: true }
       );
 
-      response = await axios.get("http://localhost:5000/auth/me", {
+      response = await axios.get(`${API_URL}/auth/me`, {
         withCredentials: true,
       });
       authContext.setAccount(response.data);

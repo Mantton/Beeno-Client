@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { FaPlus } from "react-icons/fa";
 import { IUseState } from "../../lib/types";
+import { API_URL } from "../../lib/constants";
 
 type ComponentProp = {
   eraId: number;
@@ -58,7 +59,7 @@ export default function NewCollectionForm({
   const onSubmit: SubmitHandler<Props> = async (values) => {
     try {
       await axios.post(
-        "http://localhost:5000/collection/new",
+        `${API_URL}/collection/new`,
         {
           title: values.name,
           eraId,

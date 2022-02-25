@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { FaPlus } from "react-icons/fa";
 import { IUseState } from "../../lib/types";
+import { API_URL } from "../../lib/constants";
 
 type ComponentProp = {
   groupId: number;
@@ -67,14 +68,14 @@ export default function NewEraForm({
       form.append("file", file);
       // Get Uploaded Image Id
       const imageUploadResponse = await axios.post(
-        "http://localhost:5000/image/upload",
+        `${API_URL}/image/upload`,
         form,
         { withCredentials: true }
       );
       const imageId = imageUploadResponse.data.data.id;
       // Sent Company creation request
       await axios.post(
-        "http://localhost:5000/era/group/new",
+        `${API_URL}/era/group/new`,
         {
           title: values.name,
           imageId,

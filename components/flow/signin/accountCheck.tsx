@@ -2,6 +2,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useContext } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { API_URL } from "../../../lib/constants";
 import {
   SignInFlowContext,
   useSignInFlowContext,
@@ -25,10 +26,9 @@ export default function FindAccount() {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/auth/flow/exists",
-        { text: values.entry }
-      );
+      const response = await axios.post(`${API_URL}/auth/flow/exists`, {
+        text: values.entry,
+      });
       context?.setEntry(values.entry);
       context?.setType(response.data.type);
     } catch (err: any) {

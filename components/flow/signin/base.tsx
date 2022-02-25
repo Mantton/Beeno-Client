@@ -10,12 +10,6 @@ interface SignInFormProps {
   handle: string;
 }
 export default function SignInForm() {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm();
-
   const context = useContext(SignInFlowContext);
 
   if (context?.type) {

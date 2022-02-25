@@ -11,6 +11,7 @@ import Head from "next/head";
 import { Artist, Group } from "../../../lib/types";
 import { FaFolderPlus, FaUserPlus, FaVideo } from "react-icons/fa";
 import NewMemberForm from "../../../components/forms/newMember";
+import { API_URL } from "../../../lib/constants";
 
 type PageResponse = Group;
 export default function GroupPage() {
@@ -18,7 +19,7 @@ export default function GroupPage() {
   const { id } = router.query;
   const { account } = useAuthContext();
   //Reference : https://github.com/vercel/next.js/discussions/15952#discussioncomment-47750
-  const address = `http://localhost:5000/group/${id}`;
+  const address = `${API_URL}/group/${id}`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
   const { data, error, mutate } = useSWR<PageResponse>(

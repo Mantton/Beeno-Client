@@ -8,13 +8,14 @@ import { FaEllipsisH, FaPlus } from "react-icons/fa";
 import slugify from "slugify";
 import AddCompanyDialog from "../../components/admin/popup";
 import { useEffect, useState } from "react";
+import { API_URL } from "../../lib/constants";
 
 interface PageResponse {
   companies: Company[];
 }
 
 export default function CompanyPage() {
-  const address = `http://localhost:5000/company?page=1&sort=0`;
+  const address = `${API_URL}/company?page=1&sort=0`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
   const { data, error, mutate } = useSWR<PageResponse>(address, fetcher);
