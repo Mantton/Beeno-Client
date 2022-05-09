@@ -118,6 +118,7 @@ export interface CardExcerpt {
   artists: ArtistExcerpt[];
   rarity: Rarity;
   favorites: number;
+  created: Date;
   items: {
     total: number;
     onTradeHub: number;

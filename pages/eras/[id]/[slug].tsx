@@ -98,7 +98,22 @@ export default function EraPage() {
   const IRS = (id: number) => selectedRarities.includes(id);
   const filteredCards = cards
     .filter((v) => v.artists.map((v) => v.id).some(IMS))
-    .filter((v) => selectedRarities.includes(v.rarity.id));
+    .filter((v) => selectedRarities.includes(v.rarity.id))
+    .sort((a, b) => {
+      const index = SORT_MODES.indexOf(sortMode);
+
+      switch (index) {
+        default:
+        case 0:
+          return b.rarity.id - a.rarity.id;
+        case 1:
+          return a.rarity.id - b.rarity.id;
+        case 3:
+          return new Date(b.created).getTime() - new Date(a.created).getTime();
+        case 2:
+          return new Date(a.created).getTime() - new Date(b.created).getTime();
+      }
+    });
   return (
     <>
       <Head>
