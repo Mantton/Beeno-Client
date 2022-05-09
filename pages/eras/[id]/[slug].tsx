@@ -1,42 +1,56 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import useSWR, { KeyedMutator } from "swr";
+import useSWR from "swr";
 import Image from "next/image";
 import Head from "next/head";
-import Link from "next/link";
-import { createContext, useEffect, useState } from "react";
-import { EraPageMutatorContext, useAuthContext } from "../../../lib/hooks/auth";
-import NewCollectionForm from "../../../components/forms/newCollection";
-import NewSetForm from "../../../components/forms/newSet";
-import BaseBeenoCard from "../../../components/card/baseCard";
-import CollectionView from "../../../modules/eras/CollectionView/collection_view";
+import { Fragment, useEffect, useState } from "react";
+import { useAuthContext } from "../../../lib/hooks/auth";
 import { FaPlus } from "react-icons/fa";
-import { Era } from "../../../lib/types";
+import { SingleEraResponse } from "../../../lib/types";
+import BaseBeenoCard from "../../../components/card/baseCard";
+import { Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, SelectorIcon } from "@heroicons/react/outline";
 
 export default function EraPage() {
   const router = useRouter();
-  const [filter, setFilter] = useState<number | null>(null);
-  const [ncm, setNcm] = useState(false); // New Collection Modal
-  const [nem, setNem] = useState(false); // New Set Modal
+  const RARITIES = ["Common", "Uncommon", "Rare", "Ultra Rare", "Legendary"];
+  const SORT_MODES = [
+    "Rarity: Rare to Common",
+    "Rarity: Common to Rare",
+    "Oldest",
+    "Newest",
+  ];
+  const [sortMode, setSortMode] = useState(SORT_MODES[0]);
 
-  enum View {
-    collections,
-    allCards,
-  }
+  const rarityColor = (n: string) => {
+    switch (n) {
+      case "Common":
+        return "bg-common";
+      case "Uncommon":
+        return "bg-uncommon";
+      case "Rare":
+        return "bg-rare";
+      case "Ultra Rare":
+        return "bg-ultra_rare";
+      case "Legendary":
+        return "bg-legendary";
+      default:
+        return "bg-common";
+    }
+  };
 
-  const [currentView, setCurrentView] = useState(View.collections);
-  const { account } = useAuthContext();
   const { id } = router.query;
+  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
+  const [selectedRarities, setSelectedRarities] = useState<number[]>([]);
 
-  const address = `http://localhost:5000/era/${id}`;
+  const address = `http://localhost:5000/eras/${id}`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
 
-  const { data, error, mutate } = useSWR<Era>(id ? address : null, fetcher);
-
-  useEffect(() => {
-    mutate();
-  }, [ncm, nem]);
+  const { data, error, mutate } = useSWR<SingleEraResponse>(
+    id ? address : null,
+    fetcher
+  );
   if (error) {
     return (
       <div className="flex justify-center">
@@ -59,9 +73,32 @@ export default function EraPage() {
   }
   const era = data;
   const group = era.group;
-  const members = group!.members;
-  const collections = era.collections;
+  const cards = era.cards;
 
+  const toggleMemberFilter = (id: number) => {
+    if (selectedMembers.includes(id)) {
+      setSelectedMembers(selectedMembers.filter((n) => n != id));
+    } else {
+      setSelectedMembers([...selectedMembers, id]);
+    }
+  };
+
+  const toggleRarityFilter = (id: number) => {
+    if (selectedRarities.includes(id)) {
+      setSelectedRarities(selectedRarities.filter((n) => n != id));
+    } else {
+      setSelectedRarities([...selectedRarities, id]);
+    }
+  };
+
+  // Is member selected
+  const IMS = (id: number) => selectedMembers.includes(id);
+
+  // Is rarity selected
+  const IRS = (id: number) => selectedRarities.includes(id);
+  const filteredCards = cards
+    .filter((v) => v.artists.map((v) => v.id).some(IMS))
+    .filter((v) => selectedRarities.includes(v.rarity.id));
   return (
     <>
       <Head>
@@ -84,47 +121,150 @@ export default function EraPage() {
                 <p className="text-3xl drop-shadow-lg"> {era.title}</p>
               </div>
             </div>
-            {account && account.privileges.some((p) => [0, 2].includes(p)) && (
-              <div className="absolute inset-0 flex justify-end items-end p-4">
-                <div className=" flex items-center justify-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNcm(true);
-                    }}
-                    className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md bg-opacity-80 hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-                  >
-                    <FaPlus></FaPlus>
-                  </button>
-                </div>
-                <NewCollectionForm
-                  eraId={era.id}
-                  setIsOpen={setNcm}
-                  isOpen={ncm}
-                ></NewCollectionForm>
-              </div>
-            )}
           </div>
         </div>
 
-        <div className="flex justify-center p-4 ">
-          <div className="border-2 border-white rounded-md flex justify-center ">
-            <button onClick={() => setCurrentView(View.collections)}>
-              <div className="w-32 p-4 items-center flex justify-center hover:shadow-md hover:shadow-amber-700 rounded-l-sm">
-                <span className="">Collections</span>
+        <div className="flex gap-1">
+          <div className="flex-col w-1/3 min-h-screen py-4 px-3 bg-gray-50 ">
+            <span className="self-center text-xl font-semibold whitespace-nowrap">
+              Filter
+            </span>
+
+            <div className="flex-col border-t-2 border-t-black rounded-sm pt-3">
+              <span className=" text-md">
+                Members ({group?.members.length ?? 0})
+              </span>
+              <div className="flex gap-2 flex-wrap">
+                {group?.members.map((member) => (
+                  <button onClick={() => toggleMemberFilter(member.id)}>
+                    <div
+                      key={member.id}
+                      className={
+                        "py-1 px-3 border-2 rounded-md " +
+                        (IMS(member.id) ? "border-gray-600" : "border-gray-300")
+                      }
+                    >
+                      <span>{member.name}</span>
+                    </div>
+                  </button>
+                ))}
               </div>
-            </button>
-            <div className="bg-primary w-[2px]"></div>
-            <button onClick={() => setCurrentView(View.allCards)}>
-              <div className="w-32 p-4 items-center flex justify-center">
-                <span className="">All Cards</span>
+            </div>
+
+            <div className="pt-4">
+              <span className=" text-md">Rarity</span>
+              <div className="flex gap-2 flex-wrap">
+                {RARITIES.map((rarity) => {
+                  const id = RARITIES.indexOf(rarity);
+                  return (
+                    <button
+                      onClick={() => toggleRarityFilter(id)}
+                      className={
+                        "px-3 py-1 border-2 rounded-md " +
+                        (IRS(id) ? "border-gray-600" : "border-gray-300")
+                      }
+                    >
+                      <div className="flex items-center gap-1">
+                        <div
+                          className={
+                            "w-3 h-3 rounded-full " + rarityColor(rarity)
+                          }
+                        ></div>
+                        <span>{rarity}</span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-            </button>
+            </div>
+
+            <div className="flex-col pt-4">
+              <span>Status</span>
+              <div>
+                <button className="px-3 py-1 border-2  border-gray-300 rounded-md">
+                  <span>On TradeHub</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="flex-col  py-4 px-3 w-full ">
+            <div className="px-4 flex justify-between items-center">
+              <span className="self-center text-xl font-semibold whitespace-nowrap">
+                Cards
+              </span>
+
+              <div className="flex gap-4 px-4">
+                <div className="w-64 z-10">
+                  <Listbox value={sortMode} onChange={setSortMode}>
+                    <div className="relative mt-1">
+                      <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 text-left border-[1px] border-gray-400">
+                        <span className="block truncate">{sortMode}</span>
+                      </Listbox.Button>
+                      <Transition
+                        as={Fragment}
+                        leave="transition ease-in duration-100"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                      >
+                        <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                          {SORT_MODES.map((mode) => (
+                            <Listbox.Option
+                              key={mode}
+                              className={({ active }) =>
+                                `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                  active
+                                    ? "bg-amber-100 text-amber-900"
+                                    : "text-gray-900"
+                                }`
+                              }
+                              value={mode}
+                            >
+                              {({ selected }) => (
+                                <>
+                                  <span
+                                    className={`block truncate ${
+                                      selected ? "font-medium" : "font-normal"
+                                    }`}
+                                  >
+                                    {mode}
+                                  </span>
+                                  {selected ? (
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                      <CheckIcon
+                                        className="h-5 w-5"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  ) : null}
+                                </>
+                              )}
+                            </Listbox.Option>
+                          ))}
+                        </Listbox.Options>
+                      </Transition>
+                    </div>
+                  </Listbox>
+                </div>
+
+                {/* <div className="py-1 px-3 border-2 border-gray-600 rounded-md">
+                  <span>View Mode</span>
+                </div> */}
+              </div>
+            </div>
+            <div className="p-4 flex justify-items-start flex-wrap gap-8 items-center">
+              {filteredCards.map((card) => (
+                <div key={card.id}>
+                  <BaseBeenoCard
+                    group={group}
+                    era={{ id: era.id, title: era.title }}
+                    card={card}
+                    set={null}
+                  ></BaseBeenoCard>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <EraPageMutatorContext.Provider value={{ mutate }}>
-          <CollectionView era={era} />
-        </EraPageMutatorContext.Provider>
       </div>
     </>
   );

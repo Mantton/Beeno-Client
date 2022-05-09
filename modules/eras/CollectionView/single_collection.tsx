@@ -53,12 +53,8 @@ export default function SingleCollection({
             <BaseBeenoCard
               set={set}
               era={{ id: era.id, title: era.title }}
-              group={{
-                id: group.id,
-                name: group.name,
-                memberCount: group.members.length,
-              }}
-              collection={{
+              group={group}
+              set={{
                 id: collection.id,
                 title: collection.title,
               }}

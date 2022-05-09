@@ -1,38 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CardSet } from "../../lib/types";
+import { CardExcerpt, GroupExcerpt } from "../../lib/types";
 
 interface PageProp {
-  set: CardSet;
-  collection: {
+  card: CardExcerpt;
+  set: {
     id: number;
     title: string;
-  };
+  } | null;
   era: {
     id: number;
     title: string;
   };
-  group: {
-    id: number;
-    name: string;
-    memberCount: number;
-  } | null;
+  group: GroupExcerpt | null;
 }
-export default function BaseBeenoCard({
-  set,
-  collection,
-  era,
-  group,
-}: PageProp) {
+export default function BaseBeenoCard({ card, set, era, group }: PageProp) {
   const gradientClass = `hover:bg-[length:100%_100%] bg-center bg-gradient-to-t from-primary ${rarityGradientEndColor(
-    set.rarity.id
+    card.rarity.id
   )} `;
-  const artists = set.artists;
-  const textClass = rarityTextColor(set.rarity.id);
-  const containsAllMembers = artists.length == group?.memberCount;
+  const artists = card.artists;
+  const textClass = rarityTextColor(card.rarity.id);
+  const containsAllMembers = artists.length == group?.members.length;
   const hoverClass = "text-md font-light text-gray-400 ";
   return (
-    <div className="flex p-2">
+    <div className="flex">
       <div className="group  rounded-2xl shadow-lg">
         <Link href={"#"}>
           <a>
@@ -42,19 +33,20 @@ export default function BaseBeenoCard({
               ></div>
               <div className="h-96 w-60 relative m-2">
                 <Image
-                  src={set.imageUrl}
+                  src={card.imageUrl}
                   alt="CARD"
                   className="object-cover rounded-xl "
                   layout="fill"
                 />
                 <div className="transition ease-in-out delay-150  absolute inset-0 flex  justify-start items-end z-0 opacity-0 hover:opacity-100 bg-gradient-to-b from-transparent to-black rounded-xl">
                   <div className="flex flex-col gap-2 text-white px-2 py-4">
+                    {}
                     <span>
                       {" "}
-                      Set #{set.id}
+                      Card #{card.id.toString().padStart(4, "0")}
                       {" • "}
                       <span className={`font-semibold ${textClass}`}>
-                        {set.rarity.label}
+                        {card.rarity.label}
                       </span>
                     </span>
                     <p className="text-sm font-thin text-gray-500">
@@ -63,7 +55,7 @@ export default function BaseBeenoCard({
                         {" • "}
                         {era.title}
                       </span>
-                      <p>Collection #{collection.id}</p>
+                      {set && <p>Collection #{set.id}</p>}
                     </p>
                     {artists.length === 1 && (
                       <div className="flex gap-2 items-center">

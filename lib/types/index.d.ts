@@ -47,16 +47,81 @@ export type Group = {
   eras?: Era[];
 };
 
-export type Set = {
+export type Card = {
   id: number;
   created: Date;
   rarity: Rarity;
   imageUrl: string;
   artists: Artist[];
+  collectionId: number;
 };
 
 export type Collection = {
   id: number;
   title: string;
-  sets: Set[];
+  cards: Card[];
 };
+
+export interface CardExcerpt {
+  id: number;
+  imageUrl: string;
+  artists: Artist[];
+  rarity: {
+    id: number;
+    label: string;
+    points: number;
+  };
+  favorites: number;
+  items: {
+    total: number;
+    onTradeHub: number;
+    inTreasury: number;
+    owned: number;
+  };
+}
+
+// NEW
+
+export interface SingleEraResponse {
+  id: number;
+  title: string;
+  startDate: Date | null;
+  group: GroupExcerpt | null;
+  artist: ArtistExcerpt | null;
+
+  imageUrl: string;
+  sets: SetExcerpt[];
+  cards: CardExcerpt[];
+}
+
+interface SetExcerpt {
+  id: number;
+  title: string;
+}
+export interface ArtistExcerpt {
+  id: number;
+  name: string;
+  imageUrl: string;
+}
+
+export interface GroupExcerpt {
+  id: number;
+  name: string;
+  logoImageUrl: string;
+  bannerImageUrl: string | null;
+  members: ArtistExcerpt[];
+}
+
+export interface CardExcerpt {
+  id: number;
+  imageUrl: string;
+  artists: ArtistExcerpt[];
+  rarity: Rarity;
+  favorites: number;
+  items: {
+    total: number;
+    onTradeHub: number;
+    inTreasury: number;
+    owned: number;
+  };
+}
