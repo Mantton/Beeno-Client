@@ -6,7 +6,7 @@ import Head from "next/head";
 import { Fragment, useEffect, useState } from "react";
 import { useAuthContext } from "../../../lib/hooks/auth";
 import { FaPlus } from "react-icons/fa";
-import { SingleEraResponse } from "../../../lib/types";
+import { Card, SingleEraResponse } from "../../../lib/types";
 import BaseBeenoCard from "../../../components/card/baseCard";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/outline";
@@ -41,8 +41,9 @@ export default function EraPage() {
 
   const { id } = router.query;
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
-  const [selectedRarities, setSelectedRarities] = useState<number[]>([]);
-
+  const [selectedRarities, setSelectedRarities] = useState<number[]>(
+    RARITIES.map((_, vix) => vix)
+  );
   const address = `http://localhost:5000/eras/${id}`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
@@ -118,8 +119,7 @@ export default function EraPage() {
     <>
       <Head>
         <title>
-          {" "}
-          {group!.name} - {era.title}{" "}
+          {group!.name} - {era.title}
         </title>
       </Head>
       <div className="flex flex-col  ">
@@ -227,9 +227,7 @@ export default function EraPage() {
                               key={mode}
                               className={({ active }) =>
                                 `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                  active
-                                    ? "bg-amber-100 text-amber-900"
-                                    : "text-gray-900"
+                                  active ? "bg-gray-100" : "text-gray-900"
                                 }`
                               }
                               value={mode}
@@ -244,7 +242,7 @@ export default function EraPage() {
                                     {mode}
                                   </span>
                                   {selected ? (
-                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
                                       <CheckIcon
                                         className="h-5 w-5"
                                         aria-hidden="true"
@@ -260,10 +258,6 @@ export default function EraPage() {
                     </div>
                   </Listbox>
                 </div>
-
-                {/* <div className="py-1 px-3 border-2 border-gray-600 rounded-md">
-                  <span>View Mode</span>
-                </div> */}
               </div>
             </div>
             <div className="p-4 flex justify-items-start flex-wrap gap-8 items-center">
