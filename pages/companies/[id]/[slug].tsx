@@ -6,9 +6,9 @@ import Link from "next/link";
 import slugify from "slugify";
 import { FaPlus } from "react-icons/fa";
 import Head from "next/head";
-import { useAuthContext } from "../../../lib/hooks/auth";
+import { useAuthContext } from "../../../hooks/auth";
 import NewGroupForm from "../../../components/forms/newGroup";
-import { Company, Group } from "../../../lib/types";
+import { Company, Group } from "../../../types";
 import { useState } from "react";
 type populatedGroup = {
   id: number;
@@ -40,13 +40,23 @@ export default function CompanyInfoPage() {
         <title>{data.name}</title>
       </Head>
 
-      <div>
-        <div className="flex justify-center">
-          <p>{data.name}</p>
+      <div className="flex flex-col my-4">
+        <div className="flex flex-col items-center">
+          <div>
+            <Image
+              src={data.imageUrl}
+              width={100}
+              height={100}
+              layout="intrinsic"
+              className="rounded-full"
+            ></Image>
+          </div>
+
+          <p className="text-xl font-semibold mt-2">{data.name}</p>
         </div>
         <div className="grid justify-left p-10">
           <div className="flex justify-between text-xl font-bold">
-            <p>Groups</p>
+            <p className="text-lg font-light">Groups</p>
             {account && account.privileges.some((p) => [0, 1].includes(p)) && (
               <button
                 onClick={() => {
@@ -62,20 +72,17 @@ export default function CompanyInfoPage() {
               </button>
             )}
           </div>
-          <div className="grid p-4 gap-4">
+          <div className="flex flex-wrap py-4 gap-10 justify-start">
             {groups.map((group) => {
               return (
-                <div
-                  key={group.id}
-                  className="flex justify-center items-center"
-                >
+                <div key={group.id} className="flex  items-center">
                   <Link
                     href={`/groups/${group.id}/${slugify(group.name, {
                       lower: true,
                     })}`}
                   >
                     <a>
-                      <div className="h-64 w-96 relative rounded-lg shadow-lg hover:shadow-xl">
+                      <div className="h-64 w-96 relative rounded-lg shadow-sm hover:shadow-xl">
                         <Image
                           src={group.bannerImageUrl}
                           layout="fill"

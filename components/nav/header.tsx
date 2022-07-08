@@ -1,13 +1,14 @@
 import { SearchIcon } from "@heroicons/react/outline";
-import NavAuthButton from "./authButton";
-import ExploreButton from "./exploreButton";
+import NavAuthButton from "./buttons/authButton";
+import ExploreButton from "./buttons/exploreButton";
 import Link from "next/link";
 import Image from "next/image";
-export default function NavBar() {
+import React from "react";
+export default function Header() {
   return (
-    <>
-      <nav className="shadow-md p-2.5 flex gap-6 justify-between items-center">
-        <Link href="/#">
+    <header className="sticky top-0 z-10 shadow-sm bg-white">
+      <nav className="py-3 px-4 flex gap-6 justify-between items-center">
+        <Link href="/">
           <a>
             <div className="flex items-center ">
               <div className="relative h-[40px] w-[40px]">
@@ -27,7 +28,7 @@ export default function NavBar() {
           <input
             type="text"
             className="w-full border border-gray-450 bg-grey-lighter text-grey-darker border-grey-lighter rounded-md h-10 px-4 focus:outline-none outline-primary rounded-r-none border-r-0"
-            placeholder="Search Beeno"
+            placeholder="Search Artists, Eras, Collections"
             size={60}
           />
 
@@ -43,6 +44,6 @@ export default function NavBar() {
           <NavAuthButton />
         </div>
       </nav>
-    </>
+    </header>
   );
 }

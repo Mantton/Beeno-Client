@@ -2,10 +2,10 @@ import axios from "axios";
 import { useRef, useState, Fragment, useEffect, useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { IUseState } from "../../lib/types";
+import { IUseState } from "../../types";
 import Select from "react-select";
 import { API_URL } from "../../lib/constants";
-import { useEraPageContext } from "../../lib/hooks/auth";
+import { useEraPageContext } from "../../hooks/auth";
 
 type NewSetFormProps = {
   collectionId: number;

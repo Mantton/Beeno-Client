@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { SignInFlowContext } from "../../../lib/hooks/auth";
+import { SignInFlowContext } from "../../../hooks/auth";
 import FindAccount from "./accountCheck";
 import EnterPassword from "./enterPassword";
 

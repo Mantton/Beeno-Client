@@ -2,7 +2,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { API_URL } from "../lib/constants";
 
 const Home: NextPage = () => {
   return (
@@ -16,7 +15,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="p-4 flex justify-center items-center">
+      <main className="px-4 flex justify-center items-center min-h-screen">
         <div className="m-4 block">
           <h1 className="text-4xl font-bold mb-5">
             Beeno, A K-pop Digital Card Trading platform.
@@ -28,11 +27,13 @@ const Home: NextPage = () => {
           <div className="flex text-white font-semibold mt-5">
             <Link href="/explore">
               <a className="py-3 px-6 bg-primary rounded-md mr-4" href="">
-                Explore
+                Explore Collections
               </a>
             </Link>
             <Link href="/leaderboard">
-              <a className="py-3 px-6 bg-primary rounded-md">Leaderboard</a>
+              <a className="py-3 px-6 bg-primary rounded-md">
+                View Leaderboard
+              </a>
             </Link>
           </div>
         </div>

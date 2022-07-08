@@ -1,7 +1,7 @@
 import Link from "next/link";
 import axios from "axios";
 import useSWR from "swr";
-import { Company } from "../../lib/types";
+import { Company } from "../../types";
 import Image from "next/image";
 import Head from "next/head";
 import { FaEllipsisH, FaPlus } from "react-icons/fa";
@@ -62,9 +62,9 @@ export default function CompanyPage() {
                       onClick={() => {
                         setSACM(true);
                       }}
-                      className="rounded-full shadow-lg bg-primary"
+                      className="rounded-full shadow-lg bg-gray-600"
                     >
-                      <FaPlus className="drop-shadow-lg text-sm m-1" />
+                      <FaPlus className="drop-shadow-lg text-sm m-1 text-white " />
                     </button>
                     <AddCompanyDialog isOpen={SACM} setIsOpen={setSACM} />
                   </div>
@@ -96,13 +96,12 @@ export default function CompanyPage() {
                               layout="intrinsic"
                               className="rounded-full"
                             ></Image>
-                            <p className="px-4">{company.name}</p>
+                            <p className="px-4 text-lg">{company.name}</p>
                           </a>
                         </Link>
                       </div>
 
                       <div className="">
-                        {" "}
                         <FaEllipsisH style={{ color: "gray" }} />
                       </div>
                     </div>

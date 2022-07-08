@@ -1,9 +1,9 @@
 import "../styles/globals.css";
 import App, { AppContext, AppProps } from "next/app";
 import Layout from "../components/layout/layout";
-import { AuthContext, useAuthContext } from "../lib/hooks/auth";
+import { AuthContext, useAuthContext } from "../hooks/auth";
 import { useEffect, useState } from "react";
-import { AccountInfo } from "../lib/hooks/auth";
+import { AccountInfo } from "../hooks/auth";
 import { API_URL } from "../lib/constants";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       value={{ account, setAccount, isLoading, setIsLoading }}
     >
       <Layout>
-        <Component {...pageProps} />{" "}
+        <Component {...pageProps} />
       </Layout>
     </AuthContext.Provider>
   );

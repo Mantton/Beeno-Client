@@ -1,8 +1,8 @@
 import { KeyedMutator } from "swr";
 import BaseBeenoCard from "../../../components/card/baseCard";
 import NewSetForm from "../../../components/forms/newSet";
-import { useAuthContext } from "../../../lib/hooks/auth";
-import { Artist, Era, Group } from "../../../lib/types";
+import { useAuthContext } from "../../../hooks/auth";
+import { Artist, Era, Group } from "../../../types";
 import SingleCollection from "./single_collection";
 
 type CollectionViewProps = {

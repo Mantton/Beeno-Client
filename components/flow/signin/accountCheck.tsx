@@ -3,10 +3,7 @@ import Link from "next/link";
 import { useContext } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { API_URL } from "../../../lib/constants";
-import {
-  SignInFlowContext,
-  useSignInFlowContext,
-} from "../../../lib/hooks/auth";
+import { SignInFlowContext, useSignInFlowContext } from "../../../hooks/auth";
 
 interface FormValues {
   entry: string;

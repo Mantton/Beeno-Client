@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import BaseBeenoCard from "../../../components/card/baseCard";
 import NewSetForm from "../../../components/forms/newSet";
-import { Artist, Collection, Group } from "../../../lib/types";
+import { Artist, Collection, Group } from "../../../types";
 
 type SingleCollectionProps = {
   collection: Collection;

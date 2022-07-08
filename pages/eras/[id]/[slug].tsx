@@ -4,15 +4,40 @@ import useSWR from "swr";
 import Image from "next/image";
 import Head from "next/head";
 import { Fragment, useEffect, useState } from "react";
-import { useAuthContext } from "../../../lib/hooks/auth";
+import { useAuthContext } from "../../../hooks/auth";
 import { FaPlus } from "react-icons/fa";
-import { Card, SingleEraResponse } from "../../../lib/types";
+import { ArtistExcerpt, Card, SingleEraResponse } from "../../../types";
 import BaseBeenoCard from "../../../components/card/baseCard";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/outline";
+import { slug } from "../../../lib/utils";
 
 export default function EraPage() {
   const router = useRouter();
+
+  const getMemberSlugsFromQuery = () => {
+    const query = router.query.m;
+    if (!query) return "all";
+    if (typeof query === "string") {
+      if (query === "all") return "all";
+      return [slug(query)];
+    }
+
+    return query.map((v) => slug(v));
+  };
+
+  const getRaritySlugsFromQuery = () => {
+    const query = router.query.r;
+
+    if (!query) return "all";
+
+    if (typeof query === "string") {
+      if (query === "all") return "all";
+      return [slug(query)];
+    }
+
+    return query.map((v) => slug(v));
+  };
   const RARITIES = ["Common", "Uncommon", "Rare", "Ultra Rare", "Legendary"];
   const SORT_MODES = [
     "Rarity: Rare to Common",
@@ -40,10 +65,7 @@ export default function EraPage() {
   };
 
   const { id } = router.query;
-  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
-  const [selectedRarities, setSelectedRarities] = useState<number[]>(
-    RARITIES.map((_, vix) => vix)
-  );
+
   const address = `http://localhost:5000/eras/${id}`;
   const fetcher = async (url: string) =>
     await axios.get(url).then((res) => res.data);
@@ -75,31 +97,52 @@ export default function EraPage() {
   const era = data;
   const group = era.group;
   const cards = era.cards;
+  const members = group!.members;
+  const updateMemberSlugs = (artist: ArtistExcerpt) => {
+    const selected = getMemberSlugsFromQuery();
+    const slugs = members.map((v) => slug(v.name));
+    const name = slug(artist.name);
+    let updatedQuery;
+    if (selected === "all")
+      updatedQuery = slugs.filter((v) => v !== slug(artist.name));
+    else if (selected.includes(name))
+      updatedQuery = selected.filter((v) => v !== name);
+    else updatedQuery = [...selected, name];
 
-  const toggleMemberFilter = (id: number) => {
-    if (selectedMembers.includes(id)) {
-      setSelectedMembers(selectedMembers.filter((n) => n != id));
-    } else {
-      setSelectedMembers([...selectedMembers, id]);
-    }
+    if (updatedQuery.length == members.length) updatedQuery = "all";
+    router.query.m = updatedQuery;
+    router.push(router);
+  };
+  const isMemberSelected = (artist: ArtistExcerpt) => {
+    const selected = getMemberSlugsFromQuery();
+    if (selected === "all") return true;
+    return selected.includes(slug(artist.name));
   };
 
-  const toggleRarityFilter = (id: number) => {
-    if (selectedRarities.includes(id)) {
-      setSelectedRarities(selectedRarities.filter((n) => n != id));
-    } else {
-      setSelectedRarities([...selectedRarities, id]);
-    }
+  const isRaritySelected = (rarity: string) => {
+    const selected = getRaritySlugsFromQuery();
+    if (selected === "all") return true;
+    return selected.includes(slug(rarity));
   };
 
-  // Is member selected
-  const IMS = (id: number) => selectedMembers.includes(id);
+  const updateRaritySlugs = (rarity: string) => {
+    const selected = getRaritySlugsFromQuery();
+    const slugs = RARITIES.map((v) => slug(v));
+    const name = slug(rarity);
+    let updatedQuery;
+    if (selected === "all") updatedQuery = slugs.filter((v) => v !== name);
+    else if (selected.includes(name))
+      updatedQuery = selected.filter((v) => v !== name);
+    else updatedQuery = [...selected, name];
 
-  // Is rarity selected
-  const IRS = (id: number) => selectedRarities.includes(id);
+    if (updatedQuery.length == RARITIES.length) updatedQuery = "all";
+
+    router.query.r = updatedQuery;
+    router.push(router);
+  };
   const filteredCards = cards
-    .filter((v) => v.artists.map((v) => v.id).some(IMS))
-    .filter((v) => selectedRarities.includes(v.rarity.id))
+    .filter((v) => v.artists.some(isMemberSelected))
+    .filter((v) => isRaritySelected(v.rarity.label))
     .sort((a, b) => {
       const index = SORT_MODES.indexOf(sortMode);
 
@@ -115,6 +158,7 @@ export default function EraPage() {
           return new Date(a.created).getTime() - new Date(b.created).getTime();
       }
     });
+
   return (
     <>
       <Head>
@@ -150,19 +194,28 @@ export default function EraPage() {
                 Members ({group?.members.length ?? 0})
               </span>
               <div className="flex gap-2 flex-wrap">
-                {group?.members.map((member) => (
-                  <button onClick={() => toggleMemberFilter(member.id)}>
-                    <div
+                {group?.members
+                  .filter((v) => slug(v.name))
+                  .map((member) => (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        updateMemberSlugs(member);
+                      }}
                       key={member.id}
-                      className={
-                        "py-1 px-3 border-2 rounded-md " +
-                        (IMS(member.id) ? "border-gray-600" : "border-gray-300")
-                      }
                     >
-                      <span>{member.name}</span>
-                    </div>
-                  </button>
-                ))}
+                      <div
+                        className={
+                          "py-1 px-3 border-2 rounded-md " +
+                          (isMemberSelected(member)
+                            ? "border-gray-600"
+                            : "border-gray-300")
+                        }
+                      >
+                        <span>{member.name}</span>
+                      </div>
+                    </button>
+                  ))}
               </div>
             </div>
 
@@ -173,10 +226,16 @@ export default function EraPage() {
                   const id = RARITIES.indexOf(rarity);
                   return (
                     <button
-                      onClick={() => toggleRarityFilter(id)}
+                      key={id}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        updateRaritySlugs(rarity);
+                      }}
                       className={
                         "px-3 py-1 border-2 rounded-md " +
-                        (IRS(id) ? "border-gray-600" : "border-gray-300")
+                        (isRaritySelected(rarity)
+                          ? "border-gray-600"
+                          : "border-gray-300")
                       }
                     >
                       <div className="flex items-center gap-1">

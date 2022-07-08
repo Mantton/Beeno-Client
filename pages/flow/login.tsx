@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
 import SignInForm from "../../components/flow/signin/base";
-import { SignInFlowProp, SignInFlowContext } from "../../lib/hooks/auth";
+import { SignInFlowProp, SignInFlowContext } from "../../hooks/auth";
 export default function LoginPage() {
   const [entry, setEntry] = useState<string | null>(null);
   const [type, setType] = useState<string | null>(null);

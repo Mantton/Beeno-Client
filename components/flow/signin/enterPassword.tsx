@@ -1,4 +1,4 @@
-import { useAuthContext, useSignInFlowContext } from "../../../lib/hooks/auth";
+import { useAuthContext, useSignInFlowContext } from "../../../hooks/auth";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";

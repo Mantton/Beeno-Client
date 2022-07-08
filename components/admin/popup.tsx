@@ -1,21 +1,19 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { IUseState } from "../../lib/types";
+import { IUseState } from "../../types";
 import NewCompany from "../../pages/admin/company/new";
 type ComponentProp = {
   isOpen: boolean;
   setIsOpen: IUseState<boolean>;
 };
-export default function AddCompanyDialog({isOpen, setIsOpen}: ComponentProp) {
-
+export default function AddCompanyDialog({ isOpen, setIsOpen }: ComponentProp) {
   function closeModal() {
     setIsOpen(false);
   }
 
   return (
     <>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"

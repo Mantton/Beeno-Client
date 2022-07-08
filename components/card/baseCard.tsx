@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CardExcerpt, GroupExcerpt } from "../../lib/types";
+import { CardExcerpt, GroupExcerpt } from "../../types";
 
 interface PageProp {
   card: CardExcerpt;
@@ -15,7 +15,7 @@ interface PageProp {
   group: GroupExcerpt | null;
 }
 export default function BaseBeenoCard({ card, set, era, group }: PageProp) {
-  const gradientClass = `hover:bg-[length:100%_100%] bg-center bg-gradient-to-t from-primary ${rarityGradientEndColor(
+  const gradientClass = `hover:bg-[length:100%_100%] bg-center bg-gradient-to-t from-purple_primary ${rarityGradientEndColor(
     card.rarity.id
   )} `;
   const artists = card.artists;

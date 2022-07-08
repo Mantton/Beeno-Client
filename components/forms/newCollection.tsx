@@ -3,7 +3,7 @@ import { useRef, useState, Fragment, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { FaPlus } from "react-icons/fa";
-import { IUseState } from "../../lib/types";
+import { IUseState } from "../../types";
 import { API_URL } from "../../lib/constants";
 
 type ComponentProp = {

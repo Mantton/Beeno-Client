@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { HiOutlineX } from "react-icons/hi";
 import { BiImageAdd } from "react-icons/bi";
-import { IUseState } from "../../lib/types";
+import { IUseState } from "../../types";
 import Image from "next/image";
 import { API_URL } from "../../lib/constants";
 
@@ -114,7 +114,7 @@ export default function NewGroupForm({
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
+          className="fixed inset-0 z-10 overflow-y-clip"
           onClose={closeModal}
         >
           <div className="min-h-screen px-4 text-center">
@@ -146,16 +146,16 @@ export default function NewGroupForm({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md">
+              <div className="inline-block w-full max-w-xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-md ">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900 flex justify-between"
+                  className=" items-center text-lg font-medium leading-6 text-gray-900 flex justify-between"
                 >
                   <p className="font-bold text-lg">Add Group</p>
 
                   <button
                     type="button"
-                    className="inline-flex justify-center px-4 py-2 text-x"
+                    className="inline-flex justify-center mx-4 my-2 text-2xl "
                     onClick={closeModal}
                   >
                     <HiOutlineX />
@@ -186,7 +186,7 @@ export default function NewGroupForm({
                           Banner Image
                         </p>
                       </label>
-                      <div className="relative h-52 w-64 bg-opacity-75 rounded-md border-2 border-dashed border-gray-700 flex justify-center items-center hover:bg-gray-500 hover:bg-opacity-50 hover:cursor-pointer">
+                      <div className="relative h-40 w-52 bg-opacity-75 rounded-md border-2 border-dashed border-gray-700 flex justify-center items-center hover:bg-gray-500 hover:bg-opacity-50 hover:cursor-pointer">
                         <input
                           type="file"
                           id="bannerImageInput"
@@ -223,7 +223,7 @@ export default function NewGroupForm({
                           Group Logo
                         </p>
                       </label>
-                      <div className="relative h-52 w-64 bg-opacity-75 rounded-md border-2 border-dashed border-gray-700 flex justify-center items-center hover:bg-gray-500 hover:bg-opacity-50 hover:cursor-pointer">
+                      <div className="relative h-40 w-52 bg-opacity-75 rounded-md border-2 border-dashed border-gray-700 flex justify-center items-center hover:bg-gray-300 hover:bg-opacity-50 hover:cursor-pointer">
                         <input
                           type="file"
                           id="logoImageInput"

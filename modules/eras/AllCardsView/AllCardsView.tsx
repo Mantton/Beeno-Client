@@ -1,5 +1,5 @@
 import BaseBeenoCard from "../../../components/card/baseCard";
-import { Era } from "../../../lib/types";
+import { Era } from "../../../types";
 
 type AllCardsViewProps = {
   era: Era;

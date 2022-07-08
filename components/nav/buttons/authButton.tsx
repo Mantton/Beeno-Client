@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AuthContext } from "../../lib/hooks/auth";
+import { AuthContext } from "../../../hooks/auth";
 import Link from "next/link";
 export default function NavAuthButton() {
   const context = useContext(AuthContext);
@@ -8,7 +8,7 @@ export default function NavAuthButton() {
   if (!account) {
     return (
       <Link href={"/flow/login"}>
-        <a className="px-2 py-1 bg-primary rounded-md text-white text-bold shadow-md">
+        <a className="px-4 py-1 bg-primary rounded-md text-white text-bold shadow-md">
           Login
         </a>
       </Link>
@@ -19,7 +19,7 @@ export default function NavAuthButton() {
       <div className="flex justify-center">
         <Link href={`/collector/${account.handle}`}>
           <a className="px-2 py-1 bg-primary rounded-md text-white text-bold shadow-md">
-            @{account.handle}
+            {account.handle}
           </a>
         </Link>
       </div>

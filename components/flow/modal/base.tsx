@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { IUseState } from "../../../lib/types";
+import { IUseState } from "../../../types";
 
 type BaseModalProps = {
   isOpen: boolean;
