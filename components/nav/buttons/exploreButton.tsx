@@ -26,12 +26,12 @@ const options = [
 
 export default function ExploreButton() {
   return (
-    <div className="max-w-sm px-4">
+    <div className="px-4 flex items-center">
       <Popover className="">
         {({}) => (
           <>
             <Popover.Button className="px-2 py-1  text-black text-bold ">
-              <span>Explore</span>
+              <span className="font-semibold text-lg">Explore</span>
             </Popover.Button>
             <Transition
               as={Fragment}

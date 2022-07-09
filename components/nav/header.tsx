@@ -6,7 +6,7 @@ import Image from "next/image";
 import React from "react";
 export default function Header() {
   return (
-    <header className="sticky top-0 z-10 shadow-sm bg-white">
+    <header className="sticky top-0 z-20 shadow-sm bg-white">
       <nav className="py-3 px-4 flex gap-6 justify-between items-center">
         <Link href="/">
           <a>
@@ -39,7 +39,7 @@ export default function Header() {
           </button>
         </form>
 
-        <div className="flex">
+        <div className="flex items-center gap-2 pr-4">
           <ExploreButton />
           <NavAuthButton />
         </div>
